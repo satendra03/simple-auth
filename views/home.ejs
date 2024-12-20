@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Welcome <%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <h1>Hy, 👋 <%= title %></h1>
+    <% if (typeof user !== 'undefined') { %>
+      <p>Welcome!</p>
+     <h5>Name:  <%= user.name %></h5>
+     <h5>Email:  <%= user.email %></h5>
+      <p>Click <a href="/">here</a> to logout</p>
+    <% }  else { %>
+      <p>Click <a href="/login">here</a> to login</p>
+      <p>Click <a href="/signup">here</a> to sign up</p>
+      <% } %>
+  </body>
+</html>
