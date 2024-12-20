@@ -8,6 +8,7 @@ import indexRouter from "./routes/index.js";
 import userRouter from "./routes/users.js";
 
 import { connectToDB } from "./connection.js";
+import { restrictUser } from "./middlewares/auth.js";
 
 const app = express();
 
@@ -28,7 +29,7 @@ app.use(express.static(path.join(__dirname, "public")));
 connectToDB("mongodb://localhost:27017/users");
 
 app.use("/", indexRouter);
-app.use("/users", userRouter);
+app.use("/users", restrictUser,userRouter);
 
 app.listen(3000, () => {
   console.clear();

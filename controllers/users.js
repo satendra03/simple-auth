@@ -1,5 +1,7 @@
 // Description: All user related functions are implemented here
 import Users from "../models/users.js";
+import { v4 as uuidv4 } from 'uuid';
+import { setUser } from "../services/auth.js";
 
 // create a new user
 export const createUser = async (req, res) => {
@@ -43,6 +45,9 @@ export const loginUser = async (req, res) => {
         .status(400)
         .render("login", { message: "Invalid credentials" });
     }
+    const sessionId = uuidv4(); 
+    setUser(sessionId, user);
+    res.cookie("sessionId", sessionId);
     return res.redirect(
       `/users/${user.email}?name=${encodeURIComponent(user.name)}`
     );
