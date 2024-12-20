@@ -14,7 +14,7 @@ This is a simple user management system built with Node.js, Express, and MongoDB
 ---
 
 ## Project Structure
-
+```bash
 │   .gitignore
 │   app.js
 │   connection.js
@@ -45,7 +45,7 @@ This is a simple user management system built with Node.js, Express, and MongoDB
         home.ejs
         login.ejs
         signup.ejs
-
+```
 ---
 
 ## License
