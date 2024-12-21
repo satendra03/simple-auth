@@ -1,7 +1,7 @@
 // Description: All user related functions are implemented here
 import Users from "../models/users.js";
-import { v4 as uuidv4 } from 'uuid';
-import { setUser } from "../services/auth.js";
+import { v4 as uuidv4 } from "uuid";
+import { getUser, setUser } from "../services/auth.js";
 
 // create a new user
 export const createUser = async (req, res) => {
@@ -15,6 +15,8 @@ export const createUser = async (req, res) => {
       email,
       password,
     });
+    const token = setUser(newUser);
+    res.cookie("sessionId", token);
     return res.redirect(
       `/users/${newUser.email}?name=${encodeURIComponent(newUser.name)}`
     );
@@ -45,9 +47,8 @@ export const loginUser = async (req, res) => {
         .status(400)
         .render("login", { message: "Invalid credentials" });
     }
-    const sessionId = uuidv4(); 
-    setUser(sessionId, user);
-    res.cookie("sessionId", sessionId);
+    const token = setUser(user);
+    res.cookie("sessionId", token); // Set the cookie
     return res.redirect(
       `/users/${user.email}?name=${encodeURIComponent(user.name)}`
     );
@@ -69,7 +70,14 @@ export const getUserProfile = async (req, res) => {
       .render("error", { message: "Missing required parameters" });
   }
 
-  // Render the user profile with the extracted data
+  // Check if the user is same as the cookie
+  const sessionId = req.cookies.sessionId;
+  const user = getUser(sessionId);
+  if (!user || user._doc.email !== email) {
+    return res.redirect("/login");
+  }
+
+  // If the user is valid, render the profile page with the user's details
   return res.render("home", {
     title: name,
     user: { email, name },

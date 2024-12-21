@@ -25,11 +25,11 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
-// Connect to DB
+// Connect to DB  
 connectToDB("mongodb://localhost:27017/users");
 
 app.use("/", indexRouter);
-app.use("/users", restrictUser,userRouter);
+app.use("/users", restrictUser, userRouter);
 
 app.listen(3000, () => {
   console.clear();
