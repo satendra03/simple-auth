@@ -41,12 +41,17 @@ export const loginUser = async (req, res) => {
     });
   }
   try {
-    const user = await Users.findOne({ email, password });
+    const user = await Users.findOne({ email });
     if (!user) {
-      return res
-        .status(400)
-        .render("login", { message: "Invalid credentials" });
+      return res.status(400).render("login", { message: "No User Found" });
     }
+
+    // Validate the email and password
+    const isMatchedPassword = await Users.matchPassword(email, password);
+    if (!isMatchedPassword) {
+      return res.status(400).render("login", { message: "Invalid Password" });
+    }
+
     const token = setUser(user);
     res.cookie("sessionId", token); // Set the cookie
     return res.redirect(
