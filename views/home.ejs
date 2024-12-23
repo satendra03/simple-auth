@@ -2,18 +2,89 @@
 <html>
   <head>
     <title>Welcome <%= title %></title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link rel="stylesheet" href="/stylesheets/style.css" />
+
+    <!-- Bootstrap link -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css"
+      integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+      crossorigin="anonymous"
+    />
   </head>
   <body>
-    <h1>Hy, 👋 <%= title %></h1>
+    <h1>Welcome! to Chat Gropup</h1>
+    <h2>Hy, 👋 <%= title %></h2>
     <% if (typeof user !== 'undefined') { %>
-      <p>Welcome!</p>
-     <h5>Name:  <%= user.name %></h5>
-     <h5>Email:  <%= user.email %></h5>
-      <p>Click <a href="/logout">here</a> to logout</p>
-    <% }  else { %>
-      <p>Click <a href="/login">here</a> to login</p>
-      <p>Click <a href="/signup">here</a> to sign up</p>
-      <% } %>
+    <p>Click <a href="/logout">here</a> to logout</p>
+
+    <div class="" id="messageInputFieldDiv">
+      <input
+        type="text"
+        placeholder="message a random person"
+        name="message"
+        id="message"
+        autofocus
+      />
+      <button id="sendBtn" type="submit">Send Message</button>
+    </div>
+
+    <h1>All Messages</h1>
+    <div class="allChatContainer">
+      <div id="allChat" style="margin-top: 10px"></div>
+    </div>
+
+    <% } else { %>
+    <p>Click <a href="/login">here</a> to login</p>
+    <p>Click <a href="/signup">here</a> to sign up</p>
+    <% } %>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js"
+      integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfNW5WAj5k8SRTp72HJo5GA+fVH6fZLvZH5rv0zPm"
+      crossorigin="anonymous"
+    ></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      // Injecting user object into JavaScript if it's defined
+
+      const userName =
+        "<%= (typeof user !== 'undefined') ? user?.name : ''  %>";
+      const userEmail =
+        "<%= (typeof user !== 'undefined') ? user?.email : '' %>";
+
+      const socket = io();
+
+      socket.on("chat-message", (msg) => {
+        const p = document.createElement("p");
+        p.innerHTML = `
+        <div class="msg-element">
+  <bold>${msg.name}:</bold>
+  <p>${msg.message}</p>
+</div>
+        `;
+        document.getElementById("allChat").appendChild(p);
+      });
+
+      const messageInput = document.getElementById("message");
+      const sendBtn = document.getElementById("sendBtn");
+
+      sendBtn.addEventListener("click", (e) => {
+        const message = messageInput.value;
+        const data = {
+          name: userName,
+          email: userEmail,
+          message,
+        };
+        socket.emit("userMessage", data);
+        messageInput.value = "";
+      });
+
+      window.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") {
+          sendBtn.click();
+        }
+      });
+    </script>
   </body>
 </html>
